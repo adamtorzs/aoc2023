@@ -18,7 +18,7 @@ class Day1 : Day {
         return sum
     }
 
-    fun findFirstDigit(input: String): Int {
+    private fun findFirstDigit(input: String): Int {
         for(i in input.indices) {
             val sub = input.substring(i)
             val num = convertNum(sub)
