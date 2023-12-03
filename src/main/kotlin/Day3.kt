@@ -38,9 +38,9 @@ class Day3 : Day {
         val lines = input.lines()
 
         var sum = 0
-        for (i in lines.indices) {
-            for (j in 0..<lines[i].length) {
-                if (lines[i][j] == '*') {
+        lines.forEachIndexed { i, line ->
+            line.forEachIndexed { j, char ->
+                if (char == '*') {
                     sum += numbersAround(lines, i, j)
                 }
             }
