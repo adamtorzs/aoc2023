@@ -50,7 +50,7 @@ class Day3 : Day {
 
     private fun surroundedByPeriods(input: List<String>, line: Int, startCol: Int, endCol: Int): Boolean {
 
-        for (x in max(startCol - 1, 0)..min(endCol + 1, input[line].length - 1)) {
+        for (x in max(startCol - 1, 0)..min(endCol + 1, input[line].lastIndex)) {
             if ((line != 0 && input[line - 1][x] != '.') ||
                 (input.size - 1 != line && input[line + 1][x] != '.')
             ) {
@@ -59,14 +59,18 @@ class Day3 : Day {
         }
 
         return !((startCol != 0 && input[line][startCol - 1] != '.') ||
-                (endCol != input[line].length - 1 && input[line][endCol + 1] != '.'))
+                (endCol != input[line].lastIndex && input[line][endCol + 1] != '.'))
     }
 
     private fun numbersAround(lines: List<String>, i: Int, j: Int): Int {
         val foundNumber = ArrayList<Int>()
-        foundNumber.addAll(findAbove(lines, i, j))
-        foundNumber.addAll(findBelow(lines, i, j))
-        foundNumber.addAll(findInLine(lines, i, j))
+        if (i != 0) {
+            foundNumber.addAll(findNumsInLine(lines, i - 1, j))
+        }
+        if (i != lines.lastIndex) {
+            foundNumber.addAll(findNumsInLine(lines, i + 1, j))
+        }
+        foundNumber.addAll(findNumsInLine(lines, i, j))
 
         return if (foundNumber.size == 2) {
             foundNumber[0] * foundNumber[1]
@@ -75,56 +79,20 @@ class Day3 : Day {
         }
     }
 
-    private fun findAbove(lines: List<String>, i: Int, j: Int): ArrayList<Int> {
+    private fun findNumsInLine(lines: List<String>, i: Int, j: Int): ArrayList<Int> {
         val foundNumber = ArrayList<Int>()
-        if (i == 0) {
-            return foundNumber
-        }
-        if (lines[i - 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i - 1, j)
-            foundNumber.add(lines[i - 1].substring(cols.first, cols.second).toInt())
-            return foundNumber
-        }
-        if (j != 0 && lines[i - 1][j - 1].isDigit() && !lines[i - 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i - 1, j - 1)
-            foundNumber.add(lines[i - 1].substring(cols.first, cols.second).toInt())
-        }
-        if (j != lines[i].length - 1 && lines[i - 1][j + 1].isDigit() && !lines[i - 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i - 1, j + 1)
-            foundNumber.add(lines[i - 1].substring(cols.first, cols.second).toInt())
-        }
-        return foundNumber
-    }
-
-    private fun findBelow(lines: List<String>, i: Int, j: Int): ArrayList<Int> {
-        val foundNumber = ArrayList<Int>()
-        if (i == lines.size - 1) {
-            return foundNumber
-        }
-        if (lines[i + 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i + 1, j)
-            foundNumber.add(lines[i + 1].substring(cols.first, cols.second).toInt())
-        }
-        if (j != 0 && lines[i + 1][j - 1].isDigit() && !lines[i + 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i + 1, j - 1)
-            foundNumber.add(lines[i + 1].substring(cols.first, cols.second).toInt())
-        }
-        if (j != 0 && lines[i + 1][j + 1].isDigit() && !lines[i + 1][j].isDigit()) {
-            val cols = getNumberStartEnd(lines, i + 1, j + 1)
-            foundNumber.add(lines[i + 1].substring(cols.first, cols.second).toInt())
-        }
-        return foundNumber
-    }
-
-    private fun findInLine(lines: List<String>, i: Int, j: Int): ArrayList<Int> {
-        val foundNumber = ArrayList<Int>()
-        if (j != 0 && lines[i][j - 1].isDigit()) {
-            val cols = getNumberStartEnd(lines, i, j - 1)
+        if (lines[i][j].isDigit()) {
+            val cols = getNumberStartEnd(lines, i, j)
             foundNumber.add(lines[i].substring(cols.first, cols.second).toInt())
-        }
-        if (j != lines[i].length - 1 && lines[i][j + 1].isDigit()) {
-            val cols = getNumberStartEnd(lines, i, j + 1)
-            foundNumber.add(lines[i].substring(cols.first, cols.second).toInt())
+        } else {
+            if (j != 0 && lines[i][j - 1].isDigit() && !lines[i][j].isDigit()) {
+                val cols = getNumberStartEnd(lines, i, j - 1)
+                foundNumber.add(lines[i].substring(cols.first, cols.second).toInt())
+            }
+            if (j != lines[i].lastIndex && lines[i][j + 1].isDigit() && !lines[i][j].isDigit()) {
+                val cols = getNumberStartEnd(lines, i, j + 1)
+                foundNumber.add(lines[i].substring(cols.first, cols.second).toInt())
+            }
         }
         return foundNumber
     }
@@ -135,7 +103,7 @@ class Day3 : Day {
         while (startCol != 0 && lines[i][startCol - 1].isDigit()) {
             startCol--
         }
-        while (endCol != lines[i].length - 1 && lines[i][endCol + 1].isDigit()) {
+        while (endCol != lines[i].lastIndex && lines[i][endCol + 1].isDigit()) {
             endCol++
         }
         return Pair(startCol, endCol + 1)
