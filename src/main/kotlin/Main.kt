@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main() {
-    val day: Day = Day3()
+    val day: Day = Day4()
     val input : String = File(day.fileName() + ".txt").readText()
 
     println(day.solve1(input))
