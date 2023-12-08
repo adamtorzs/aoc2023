@@ -43,9 +43,9 @@ class Day8 : Day {
     }
 
     private fun getNodes(lines: List<String>): HashMap<String, Node> {
-        lines.toMutableList().filter { it.isNotEmpty() }
+        val filteredLines = lines.toMutableList().filter { it.isNotEmpty() }
 
-        for (line in lines) {
+        for (line in filteredLines) {
             nodes[line.substring(0, 3)] = Node(line.substring(7, 10), line.substring(12, 15))
         }
 
