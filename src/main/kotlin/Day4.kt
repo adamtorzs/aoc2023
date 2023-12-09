@@ -40,9 +40,8 @@ class Day4 : Day {
         val own = numbers[1].trim().toIntList()
         return Pair(id, winning.count { own.contains(it) })
     }
-
-    private fun String.toIntList(delimiter: String = " "): List<Int> =
-        this.trim().split(delimiter).filter { it.isNotEmpty() }.map { it.toInt() }
-
     override fun fileName(): String = "4"
 }
+
+fun String.toIntList(delimiter: String = " "): List<Int> =
+    this.trim().split(delimiter).filter { it.isNotEmpty() }.map { it.toInt() }
