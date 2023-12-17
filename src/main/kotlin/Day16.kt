@@ -39,7 +39,7 @@ class Day16 : Day {
         return when (field[currentPoint.first][currentPoint.second]) {
             '.' -> energized.plus(
                 beam(
-                    nextInDirection(currentPoint.first, currentPoint.second, currentDirection),
+                    currentDirection.nextInDirection(currentPoint.first, currentPoint.second),
                     currentDirection,
                     field,
                     visited
@@ -48,14 +48,14 @@ class Day16 : Day {
 
             '/', '\\' -> {
                 val nextDir = currentDirection.changeDir(field[currentPoint.first][currentPoint.second])
-                val nextPos = nextInDirection(currentPoint.first, currentPoint.second, nextDir)
+                val nextPos = nextDir.nextInDirection(currentPoint.first, currentPoint.second)
                 energized.plus(beam(nextPos, nextDir, field, visited))
             }
 
             '|' -> when (currentDirection.isVertical()) {
                 true -> energized.plus(
                     beam(
-                        nextInDirection(currentPoint.first, currentPoint.second, currentDirection),
+                        currentDirection.nextInDirection(currentPoint.first, currentPoint.second),
                         currentDirection,
                         field,
                         visited
@@ -71,7 +71,7 @@ class Day16 : Day {
             '-' -> when (currentDirection.isVertical()) {
                 false -> energized.plus(
                     beam(
-                        nextInDirection(currentPoint.first, currentPoint.second, currentDirection),
+                        currentDirection.nextInDirection(currentPoint.first, currentPoint.second),
                         currentDirection,
                         field,
                         visited
@@ -89,30 +89,32 @@ class Day16 : Day {
         }
     }
 
-    private fun nextInDirection(line: Int, col: Int, dir: Direction): Pair<Int, Int> {
-        return when (dir) {
-            Direction.UP -> Pair(line - 1, col)
-            Direction.DOWN -> Pair(line + 1, col)
-            Direction.RIGHT -> Pair(line, col + 1)
-            Direction.LEFT -> Pair(line, col - 1)
-        }
-    }
 
-    private enum class Direction {
-        UP, DOWN, LEFT, RIGHT;
-
-        fun changeDir(mirror: Char): Direction {
-            return when (Pair(this, mirror)) {
-                Pair(UP, '/'), Pair(DOWN, '\\') -> RIGHT
-                Pair(UP, '\\'), Pair(DOWN, '/') -> LEFT
-                Pair(LEFT, '\\'), Pair(RIGHT, '/') -> UP
-                Pair(LEFT, '/'), Pair(RIGHT, '\\') -> DOWN
-                else -> throw IllegalArgumentException()
-            }
-        }
-
-        fun isVertical(): Boolean = this == UP || this == DOWN
-    }
 
     override fun fileName(): String = "16"
+}
+
+enum class Direction {
+    UP, DOWN, LEFT, RIGHT;
+
+    fun changeDir(mirror: Char): Direction {
+        return when (Pair(this, mirror)) {
+            Pair(UP, '/'), Pair(DOWN, '\\') -> RIGHT
+            Pair(UP, '\\'), Pair(DOWN, '/') -> LEFT
+            Pair(LEFT, '\\'), Pair(RIGHT, '/') -> UP
+            Pair(LEFT, '/'), Pair(RIGHT, '\\') -> DOWN
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    fun nextInDirection(line: Int, col: Int): Pair<Int, Int> {
+        return when (this) {
+            UP -> Pair(line - 1, col)
+            DOWN -> Pair(line + 1, col)
+            RIGHT -> Pair(line, col + 1)
+            LEFT -> Pair(line, col - 1)
+        }
+    }
+
+    fun isVertical(): Boolean = this == UP || this == DOWN
 }
