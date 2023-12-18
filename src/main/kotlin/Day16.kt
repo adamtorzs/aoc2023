@@ -1,12 +1,12 @@
 class Day16 : Day {
 
     override fun solve1(input: String): Any {
-        return beam(Pair(0, 0), Direction.RIGHT, input.lines()).count()
+        return beam(Point(0, 0), Direction.RIGHT, input.lines()).count()
     }
 
     override fun solve2(input: String): Any {
         val lines = input.lines()
-        val startPoints = ArrayList<Pair<Direction, Pair<Int, Int>>>()
+        val startPoints = ArrayList<Pair<Direction, Point<Int>>>()
         for (i in lines.indices) {
             startPoints.add(Direction.RIGHT to (i to 0))
             startPoints.add(Direction.LEFT to (i to lines.first().lastIndex))
@@ -19,11 +19,11 @@ class Day16 : Day {
     }
 
     private fun beam(
-        currentPoint: Pair<Int, Int>,
+        currentPoint: Point<Int>,
         currentDirection: Direction,
         field: List<String>,
-        visited: HashSet<Pair<Direction, Pair<Int, Int>>> = HashSet()
-    ): Set<Pair<Int, Int>> {
+        visited: HashSet<Pair<Direction, Point<Int>>> = HashSet()
+    ): Set<Point<Int>> {
         if (currentPoint.first < 0 || currentPoint.second < 0 || currentPoint.first == field.size || currentPoint.second == field.first().length) {
             return HashSet()
         }
@@ -33,7 +33,7 @@ class Day16 : Day {
 
 
         visited.add(Pair(currentDirection, currentPoint))
-        val energized = HashSet<Pair<Int, Int>>()
+        val energized = HashSet<Point<Int>>()
         energized.add(currentPoint)
 
         return when (field[currentPoint.first][currentPoint.second]) {
@@ -98,7 +98,7 @@ enum class Direction {
     UP, DOWN, LEFT, RIGHT;
 
     fun changeDir(mirror: Char): Direction {
-        return when (Pair(this, mirror)) {
+        return when (Point(this, mirror)) {
             Pair(UP, '/'), Pair(DOWN, '\\') -> RIGHT
             Pair(UP, '\\'), Pair(DOWN, '/') -> LEFT
             Pair(LEFT, '\\'), Pair(RIGHT, '/') -> UP
@@ -107,14 +107,26 @@ enum class Direction {
         }
     }
 
-    fun nextInDirection(line: Int, col: Int): Pair<Int, Int> {
+    fun nextInDirection(line: Int, col: Int): Point<Int> {
         return when (this) {
-            UP -> Pair(line - 1, col)
-            DOWN -> Pair(line + 1, col)
-            RIGHT -> Pair(line, col + 1)
-            LEFT -> Pair(line, col - 1)
+            UP -> Point(line - 1, col)
+            DOWN -> Point(line + 1, col)
+            RIGHT -> Point(line, col + 1)
+            LEFT -> Point(line, col - 1)
+        }
+    }
+
+    fun nextInDirection(line: Long, col: Long, steps: Long): Point<Long> {
+        return when (this) {
+            UP -> Point(line - steps, col)
+            DOWN -> Point(line + steps, col)
+            RIGHT -> Point(line, col + steps)
+            LEFT -> Point(line, col - steps)
         }
     }
 
     fun isVertical(): Boolean = this == UP || this == DOWN
 }
+
+private operator fun <T> T.minus(i: Int): T = this - i
+private operator fun <T> T.plus(i: Int): T = this + i
